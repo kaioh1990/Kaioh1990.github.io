@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Opening Reddit…</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 17px -apple-system, system-ui, sans-serif; margin: 0; padding: 48px 24px; text-align: center; }
+  a { color: #4f52d6; }
+</style>
+</head>
+<body>
+<p id="msg">Opening Reddit…</p>
+<script>
+  // Fallback only: if Apollo didn't take this link, send the browser on to Reddit.
+  (function () {
+    var target = null;
+    try {
+      var raw = new URLSearchParams(location.search).get("url");
+      var u = new URL(raw);
+      var h = u.hostname.toLowerCase();
+      if ((u.protocol === "https:" || u.protocol === "http:") &&
+          (h === "reddit.com" || h.slice(-11) === ".reddit.com" || h === "redd.it")) {
+        u.protocol = "https:";
+        u.searchParams.set("noapollo", "1");   // stop Send to Apollo from looping
+        target = u.href;
+      }
+    } catch (e) {}
+    if (target) location.replace(target);
+    else document.getElementById("msg").textContent = "This link isn't a Reddit link.";
+  })();
+</script>
+</body>
+</html>
